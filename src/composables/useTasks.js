@@ -1,12 +1,32 @@
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
-const tasks = ref([
-  { id: 1, title: 'Estudar Progressive Web Apps', done: false },
-  { id: 2, title: 'Configurar o Service Worker', done: false },
-  { id: 3, title: 'Testar funcionamento offline', done: true },
-]);
+const STORAGE_KEY = 'tarefas-pwa-tasks';
 
-let nextId = 4;
+function loadTasks() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored) {
+    return JSON.parse(stored);
+  }
+  return [
+    { id: 1, title: 'Estudar Progressive Web Apps', done: false },
+    { id: 2, title: 'Configurar o Service Worker', done: false },
+    { id: 3, title: 'Testar funcionamento offline', done: true },
+  ];
+}
+
+const tasks = ref(loadTasks());
+
+let nextId =
+  tasks.value.length > 0 ? Math.max(...tasks.value.map((t) => t.id)) + 1 : 1;
+
+// Salva no localStorage sempre que as tarefas mudarem
+watch(
+  tasks,
+  (newTasks) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newTasks));
+  },
+  { deep: true },
+);
 
 export function useTasks() {
   const pendingTasks = computed(() => tasks.value.filter((t) => !t.done));
