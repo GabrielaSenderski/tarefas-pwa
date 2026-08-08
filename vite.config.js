@@ -103,4 +103,42 @@ export default defineConfig({
       },
     }),
   ],
+
+  server: {
+  host: '0.0.0.0',
+
+  proxy: {
+    '/api/token': {
+      target: 'http://localhost:8001',
+      changeOrigin: true,
+    },
+
+    '/api/users': {
+      target: 'http://localhost:8001',
+      changeOrigin: true,
+    },
+
+    '/api/vapid-public-key': {
+      target: 'http://localhost:8001',
+      changeOrigin: true,
+    },
+
+    '/api/subscriptions': {
+      target: 'http://localhost:8001',
+      changeOrigin: true,
+    },
+
+    '/api/tasks': {
+      target: 'http://localhost:8001',
+      changeOrigin: true,
+      rewrite: (path) => path.replace(/^\/api/, ''),
+    },
+
+    '/api/uploads': {
+      target: 'http://localhost:8001',
+      changeOrigin: true,
+      rewrite: (path) => path.replace(/^\/api/, ''),
+    },
+  }
+}
 });

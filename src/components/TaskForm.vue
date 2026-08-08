@@ -39,6 +39,7 @@
         <input
           type="file"
           accept="image/jpeg,image/png"
+          capture="environment"
           class="image-input"
           :disabled="uploading"
           @change="handleImageChange"
