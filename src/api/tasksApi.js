@@ -5,8 +5,8 @@ const tasksApi = {
     return apiClient.get('/tasks')
   },
 
-  create(title) {
-    return apiClient.post('/tasks', { title })
+  create(payload) {
+    return apiClient.post('/tasks', payload)
   },
 
   update(id, data) {

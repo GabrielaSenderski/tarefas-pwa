@@ -31,9 +31,20 @@ export const useTasksStore = defineStore('tasks', () => {
       const response = await tasksApi.create(payload)
       tasks.value.push(response.data)
     } catch (err) {
-      error.value = 'Erro ao adicionar tarefa.'
-      console.error(err)
-    }
+  error.value = 'Erro ao adicionar tarefa.'
+
+  console.log('STATUS:', err.response?.status)
+  console.log(
+    'RESPOSTA DO BACKEND:',
+    JSON.stringify(err.response?.data, null, 2)
+  )
+  console.log(
+    'PAYLOAD ENVIADO:',
+    JSON.stringify(payload, null, 2)
+  )
+
+  console.error(err)
+}
   }
 
   async function toggleTask(id) {
