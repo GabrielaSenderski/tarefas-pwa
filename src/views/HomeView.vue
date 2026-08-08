@@ -67,9 +67,13 @@ function handleAdd(title) {
   store.addTask(title);
 }
 
-function handleUpdate(id, title) {
-  store.updateTaskTitle(id, title);
-  editingTask.value = null;
+async function handleUpdate(id, title, imgAttachmentKey) {
+  await store.updateTask(id, {
+    title,
+    imgAttachmentKey,
+  })
+
+  editingTask.value = null
 }
 
 function handleCancel() {
