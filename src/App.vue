@@ -5,6 +5,10 @@
     <router-view />
   </main>
   <UpdatePrompt />
+
+  <!-- comando para rodar o projeto no docker: -->
+<!-- docker run -p 8001:8001 eduardosilvasc/gerenciamento-tarefas-2026:1.0 -->
+  
 </template>
 
 <script setup>
