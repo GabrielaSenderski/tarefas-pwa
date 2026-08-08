@@ -7,7 +7,7 @@
   <UpdatePrompt />
 
   <!-- comando para rodar o projeto no docker: -->
-<!--docker run -p 8001:8001 eduardosilvasc/gerenciamento-tarefas-2026:3.0 -->
+<!--docker run -p 8001:8001 eduardosilvasc/gerenciamento-tarefas-2026:4.0 -->
 <!-- http://localhost:8001/docs -->
   
 </template>
