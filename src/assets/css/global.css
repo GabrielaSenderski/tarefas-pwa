@@ -1,18 +1,744 @@
+/* ========================================
+   RESET
+======================================== */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f5f5f5;
-  color: #333;
-  min-height: 100vh;
+html {
+  min-height: 100%;
 }
 
+body {
+  min-height: 100vh;
+
+  font-family:
+    "Segoe UI",
+    Tahoma,
+    Geneva,
+    Verdana,
+    sans-serif;
+
+  background-color: #f5f7fb;
+  color: #263238;
+}
+
+
+/* ========================================
+   APP
+======================================== */
+
 #app {
-  max-width: 480px;
+  width: 100%;
+  max-width: 900px;
+
   margin: 0 auto;
+  padding: 0 24px 40px;
+}
+
+
+/* ========================================
+   HEADER / NAVBAR
+======================================== */
+
+header {
+  width: 100%;
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 30px;
+
+  border-bottom: 2px solid #4a90d9;
+}
+
+header h1 {
+  color: #4a90d9;
+
+  font-size: 28px;
+  font-weight: 700;
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+header nav a {
+  color: #3f4a56;
+
+  text-decoration: none;
+
+  font-size: 16px;
+  font-weight: 500;
+
+  transition: color 0.2s ease;
+}
+
+header nav a:hover {
+  color: #4a90d9;
+}
+
+
+/* ========================================
+   BOTÃO SAIR
+======================================== */
+
+header nav button {
+  padding: 7px 12px;
+
+  border: 1px solid #d7dee6;
+  border-radius: 7px;
+
+  background-color: #ffffff;
+  color: #52616b;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.1s ease;
+}
+
+header nav button:hover {
+  background-color: #fff1f0;
+  border-color: #f1b8b3;
+  color: #e74c3c;
+}
+
+header nav button:active {
+  transform: scale(0.97);
+}
+
+
+/* ========================================
+   LOGIN
+======================================== */
+
+.login-container {
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+
+  padding-top: 40px;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 430px;
+
+  padding: 38px;
+
+  background-color: #ffffff;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.login-form h1 {
+  margin-bottom: 28px;
+
+  color: #263238;
+
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: 18px;
+}
+
+.field label {
+  margin-bottom: 7px;
+
+  color: #455a64;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field input {
+  width: 100%;
+  height: 46px;
+
+  padding: 0 13px;
+
+  border: 1px solid #d4dbe3;
+  border-radius: 9px;
+
+  background-color: #ffffff;
+  color: #263238;
+
+  font-size: 15px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.field input:focus {
+  border-color: #4a90d9;
+
+  box-shadow:
+    0 0 0 3px rgba(74, 144, 217, 0.14);
+}
+
+.field input::placeholder {
+  color: #a0a8b0;
+}
+
+
+/* ========================================
+   BOTÃO DO LOGIN
+======================================== */
+
+.login-form button {
+  width: 100%;
+  height: 46px;
+
+  margin-top: 8px;
+
+  border: none;
+  border-radius: 9px;
+
+  background-color: #4a90d9;
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.login-form button:hover:not(:disabled) {
+  background-color: #357abd;
+
+  transform: translateY(-1px);
+}
+
+.login-form button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-form button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+
+/* ========================================
+   MENSAGENS
+======================================== */
+
+.error-message {
+  padding: 11px 14px;
+
+  margin-bottom: 18px;
+
+  border: 1px solid #f1b8b3;
+  border-radius: 8px;
+
+  background-color: #fff1f0;
+  color: #c0392b;
+
+  font-size: 14px;
+}
+
+.loading-message {
+  padding: 15px 0;
+
+  color: #718096;
+
+  font-size: 14px;
+}
+
+.empty-message {
+  margin-top: 40px;
+
+  text-align: center;
+
+  color: #8a949e;
+
+  font-size: 15px;
+}
+
+
+/* ========================================
+   TÍTULOS DAS SEÇÕES
+======================================== */
+
+.section-title {
+  margin: 26px 0 12px;
+
+  color: #52616b;
+
+  font-size: 18px;
+  font-weight: 600;
+}
+
+
+/* ========================================
+   FORMULÁRIO DE TAREFA
+======================================== */
+
+.task-form {
+  width: 100%;
+
+  margin-bottom: 30px;
+  padding: 20px;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e4e9ef;
+  border-radius: 14px;
+
+  box-shadow:
+    0 5px 18px rgba(0, 0, 0, 0.05);
+}
+
+
+/* ========================================
+   CAMPO DA TAREFA
+======================================== */
+
+.task-input {
+  width: 100%;
+  height: 52px;
+
   padding: 0 16px;
+
+  border: 1px solid #d4dbe3;
+  border-radius: 10px;
+
+  background-color: #ffffff;
+  color: #263238;
+
+  font-size: 16px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.task-input:focus {
+  border-color: #4a90d9;
+
+  box-shadow:
+    0 0 0 3px rgba(74, 144, 217, 0.12);
+}
+
+.task-input::placeholder {
+  color: #929ba5;
+}
+
+
+/* ========================================
+   BOTÃO ADICIONAR
+======================================== */
+
+.task-form button {
+  min-height: 46px;
+
+  padding: 0 22px;
+
+  border: none;
+  border-radius: 9px;
+
+  background-color: #4a90d9;
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.task-form button:hover {
+  background-color: #357abd;
+
+  transform: translateY(-1px);
+}
+
+
+/* ========================================
+   ÁREA DE IMAGEM
+   FICA EMBAIXO DA TAREFA
+======================================== */
+
+.image-section {
+  /*
+    Isso faz a área ocupar uma linha inteira
+    caso o formulário esteja usando flex.
+  */
+  flex: 0 0 100%;
+
+  width: 100%;
+
+  margin-top: 14px;
+  padding: 12px 14px;
+
+  border: 1px dashed #cbd5df;
+  border-radius: 10px;
+
+  background-color: #f8fafc;
+}
+
+
+/* Título "Imagem da tarefa" */
+
+.image-section::before {
+  content: "Imagem da tarefa";
+
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #52616b;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+/* Botão / seletor de arquivo */
+
+.image-input {
+  width: 100%;
+
+  color: #687681;
+
+  font-size: 13px;
+}
+
+.image-input::file-selector-button {
+  margin-right: 8px;
+
+  padding: 7px 11px;
+
+  border: none;
+  border-radius: 7px;
+
+  background-color: #e8f1fb;
+  color: #357abd;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease;
+}
+
+.image-input::file-selector-button:hover {
+  background-color: #dcebf9;
+}
+
+
+/* ========================================
+   LISTA DE TAREFAS
+======================================== */
+
+.task-item {
+  width: 100%;
+  min-height: 74px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 12px 16px;
+
+  margin-bottom: 10px;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e5e9ee;
+  border-radius: 12px;
+
+  box-shadow:
+    0 3px 12px rgba(0, 0, 0, 0.045);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.task-item:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.07);
+}
+
+
+/* ========================================
+   CHECKBOX + TEXTO
+======================================== */
+
+.task-label {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  flex: 1;
+
+  cursor: pointer;
+}
+
+.task-label input[type="checkbox"] {
+  width: 21px;
+  height: 21px;
+
+  margin: 0;
+
+  accent-color: #4a90d9;
+
+  cursor: pointer;
+}
+
+.task-title {
+  overflow: hidden;
+
+  color: #34434d;
+
+  font-size: 16px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-item.done {
+  opacity: 0.62;
+}
+
+.task-item.done .task-title {
+  color: #8b959e;
+
+  text-decoration: line-through;
+}
+
+
+/* ========================================
+   MINIATURA DA IMAGEM DA TAREFA
+======================================== */
+
+.task-thumbnail {
+  width: 52px;
+  height: 52px;
+
+  flex-shrink: 0;
+
+  object-fit: cover;
+
+  border: 1px solid #e0e5ea;
+  border-radius: 8px;
+
+  background-color: #f3f5f7;
+}
+
+
+/* ========================================
+   BOTÕES EDITAR / REMOVER
+======================================== */
+
+.task-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 4px;
+
+  flex-shrink: 0;
+}
+
+.task-actions button {
+  padding: 7px 10px;
+
+  border: none;
+  border-radius: 7px;
+
+  background-color: transparent;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+
+/* Editar */
+
+.task-edit {
+  color: #4a90d9;
+}
+
+.task-edit:hover {
+  background-color: #edf5ff;
+}
+
+
+/* Remover */
+
+.task-remove {
+  color: #e74c3c;
+}
+
+.task-remove:hover {
+  background-color: #fff0ee;
+}
+
+
+/* ========================================
+   RESPONSIVIDADE - CELULAR
+======================================== */
+
+@media (max-width: 600px) {
+
+  #app {
+    padding: 0 14px 30px;
+  }
+
+
+  /* Header */
+
+  header {
+    height: 62px;
+
+    margin-bottom: 20px;
+  }
+
+  header h1 {
+    font-size: 24px;
+  }
+
+  header nav {
+    gap: 10px;
+  }
+
+  header nav a {
+    font-size: 14px;
+  }
+
+  header nav button {
+    padding: 6px 9px;
+
+    font-size: 13px;
+  }
+
+
+  /* Login */
+
+  .login-container {
+    padding-top: 20px;
+  }
+
+  .login-form {
+    padding: 26px 20px;
+
+    border-radius: 13px;
+  }
+
+  .login-form h1 {
+    font-size: 28px;
+  }
+
+
+  /* Formulário */
+
+  .task-form {
+    padding: 15px;
+  }
+
+  .task-input {
+    height: 48px;
+  }
+
+
+  /* Imagem */
+
+  .image-section {
+    margin-top: 12px;
+
+    padding: 10px 12px;
+  }
+
+
+  /* Tarefas */
+
+  .task-item {
+    min-height: 68px;
+
+    gap: 9px;
+
+    padding: 10px;
+  }
+
+  .task-thumbnail {
+    width: 46px;
+    height: 46px;
+  }
+
+  .task-label {
+    gap: 8px;
+  }
+
+  .task-title {
+    font-size: 15px;
+  }
+
+
+  /* Botões */
+
+  .task-actions {
+    flex-direction: column;
+
+    gap: 0;
+  }
+
+  .task-actions button {
+    padding: 4px 7px;
+
+    font-size: 13px;
+  }
 }
