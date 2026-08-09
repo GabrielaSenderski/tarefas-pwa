@@ -67,11 +67,8 @@ function handleAdd(payload) {
   store.addTask(payload);
 }
 
-async function handleUpdate(id, title, imgAttachmentKey) {
-  await store.updateTask(id, {
-    title,
-    imgAttachmentKey,
-  })
+async function handleUpdate(id, payload) {
+  await store.updateTask(id, payload)
 
   editingTask.value = null
 }

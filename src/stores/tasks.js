@@ -24,28 +24,45 @@ export const useTasksStore = defineStore('tasks', () => {
     }
   }
 
-   async function addTask(payload) {
-    if (!payload.title?.trim()) return;
-    error.value = null;
-    try {
-      const response = await tasksApi.create(payload)
-      tasks.value.push(response.data)
-    } catch (err) {
-  error.value = 'Erro ao adicionar tarefa.'
+async function addTask(payload) {
+  if (!payload.title?.trim()) return
 
-  console.log('STATUS:', err.response?.status)
-  console.log(
-    'RESPOSTA DO BACKEND:',
-    JSON.stringify(err.response?.data, null, 2)
-  )
-  console.log(
-    'PAYLOAD ENVIADO:',
-    JSON.stringify(payload, null, 2)
-  )
+  error.value = null
 
-  console.error(err)
-}
+  const data = {
+    title: payload.title.trim(),
   }
+
+  if (payload.imgAttachmentKey) {
+    data.img_attachment_key = payload.imgAttachmentKey
+  }
+
+  console.log('CRIANDO TAREFA:')
+  console.log(JSON.stringify(data, null, 2))
+
+  try {
+    const response = await tasksApi.create(data)
+
+    console.log('TAREFA CRIADA:')
+    console.log(JSON.stringify(response.data, null, 2))
+
+    tasks.value.push(response.data)
+  } catch (err) {
+    error.value = 'Erro ao adicionar tarefa.'
+
+    console.log('STATUS:', err.response?.status)
+    console.log(
+      'RESPOSTA DO BACKEND:',
+      JSON.stringify(err.response?.data, null, 2)
+    )
+    console.log(
+      'PAYLOAD ENVIADO:',
+      JSON.stringify(data, null, 2)
+    )
+
+    console.error(err)
+  }
+}
 
   async function toggleTask(id) {
     const task = tasks.value.find((t) => t.id === id)
