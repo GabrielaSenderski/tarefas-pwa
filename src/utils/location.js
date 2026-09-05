@@ -1,3 +1,10 @@
+export function classifyAccuracy(accuracy) {
+  if (accuracy == null) return null
+  if (accuracy < 20) return 'boa'
+  if (accuracy <= 100) return 'moderada'
+  return 'baixa'
+}
+
 export function extractAddressLabel(result) {
   const address = result?.address ?? {}
   return (

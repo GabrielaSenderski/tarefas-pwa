@@ -1,34 +1,74 @@
 <template>
-  <div class="task-item" :class="{ done: task.done }">
-    <img
-      v-if="task.img_url"
-      :src="task.img_url"
-      class="task-thumbnail"
-      alt="Imagem da tarefa"
-    />
-    <label class="task-label">
-      <input type="checkbox" :checked="task.done" @change="$emit('toggle', task.id)" />
-      <span class="task-title">{{ task.title }}</span>
-    </label>
-    <div class="task-actions">
-      <button class="task-edit" @click="$emit('edit', task)">Editar</button>
-      <button class="task-remove" @click="$emit('remove', task.id)">Remover</button>
+  <div class="task-item-wrap">
+    <div class="task-item" :class="{ done: task.done }">
+      <img
+        v-if="task.img_url"
+        :src="task.img_url"
+        class="task-thumbnail"
+        alt="Imagem da tarefa"
+      />
+      <label class="task-label">
+        <input type="checkbox" :checked="task.done" @change="$emit('toggle', task.id)" />
+        <span class="task-content">
+          <span class="task-title">{{ task.title }}</span>
+          <span
+            v-if="task.latitude != null"
+            class="task-location-tag"
+            :title="task.location_label || 'Local registrado'"
+          >
+            📍 {{ task.location_label || 'Local registrado' }}
+          </span>
+        </span>
+      </label>
+      <div class="task-actions">
+        <button
+          v-if="task.latitude != null"
+          class="task-map"
+          type="button"
+          @click="expanded = !expanded"
+        >
+          {{ expanded ? 'Ocultar mapa' : 'Ver mapa' }}
+        </button>
+        <button class="task-edit" @click="$emit('edit', task)">Editar</button>
+        <button class="task-remove" @click="$emit('remove', task.id)">Remover</button>
+      </div>
     </div>
+
+    <TaskLocationMap
+      v-if="expanded && task.latitude != null"
+      :location="mapLocation"
+    />
   </div>
 </template>
 
 <script setup>
-defineProps({
+import { computed, ref } from 'vue';
+import TaskLocationMap from './TaskLocationMap.vue';
+
+const props = defineProps({
   task: {
     type: Object,
     required: true,
   },
 });
 
-defineEmits(["toggle", "remove", "edit"]);
+defineEmits(['toggle', 'remove', 'edit']);
+
+const expanded = ref(false);
+
+const mapLocation = computed(() => ({
+  latitude: props.task.latitude,
+  longitude: props.task.longitude,
+  accuracy: props.task.geolocation_accuracy,
+  label: props.task.location_label,
+}));
 </script>
 
 <style scoped>
+.task-item-wrap {
+  margin-bottom: 10px;
+}
+
 .task-item {
   display: flex;
   align-items: center;
@@ -38,7 +78,7 @@ defineEmits(["toggle", "remove", "edit"]);
   min-height: 74px;
 
   padding: 12px 16px;
-  margin-bottom: 10px;
+  margin-bottom: 0;
 
   background: #ffffff;
 
@@ -84,12 +124,34 @@ defineEmits(["toggle", "remove", "edit"]);
   cursor: pointer;
 }
 
+.task-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-width: 0;
+}
+
 .task-title {
   overflow: hidden;
 
   color: #34434d;
 
   font-size: 16px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-location-tag {
+  overflow: hidden;
+
+  max-width: 100%;
+
+  color: #357abd;
+
+  font-size: 12px;
+  font-weight: 500;
 
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -106,6 +168,7 @@ defineEmits(["toggle", "remove", "edit"]);
   gap: 4px;
 }
 
+.task-map,
 .task-edit,
 .task-remove {
   padding: 7px 10px;
@@ -121,6 +184,14 @@ defineEmits(["toggle", "remove", "edit"]);
   cursor: pointer;
 
   transition: background 0.2s ease;
+}
+
+.task-map {
+  color: #2e7d4f;
+}
+
+.task-map:hover {
+  background: #edf8f1;
 }
 
 .task-edit {
@@ -174,6 +245,7 @@ defineEmits(["toggle", "remove", "edit"]);
     flex-direction: column;
   }
 
+  .task-map,
   .task-edit,
   .task-remove {
     padding: 4px 7px;

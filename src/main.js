@@ -1,4 +1,5 @@
-import './assets/css/global.css';
+import './assets/css/global.css'
+import 'leaflet/dist/leaflet.css'
 
 import { registerSW } from 'virtual:pwa-register';
 

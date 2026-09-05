@@ -73,17 +73,70 @@
 
     </div>
 
+    <div class="location-section">
+      <p class="location-privacy">
+        A localização é opcional. Se você capturar, latitude e longitude
+        serão associadas a esta tarefa e armazenadas no servidor.
+      </p>
+
+      <div class="location-actions">
+        <button
+          type="button"
+          class="location-button"
+          :disabled="!isSupported || loadingLocation || uploading"
+          @click="handleGetLocation"
+        >
+          {{ loadingLocation ? 'Obtendo localização...' : 'Usar localização atual' }}
+        </button>
+
+        <button
+          v-if="location"
+          type="button"
+          class="location-button-remove"
+          :disabled="uploading"
+          @click="clearLocation"
+        >
+          Remover localização
+        </button>
+      </div>
+
+      <p v-if="!isSupported" class="location-error">
+        Geolocalização não suportada neste dispositivo.
+      </p>
+      <p v-else-if="locationError" class="location-error">{{ locationError }}</p>
+
+      <div v-if="location" class="location-details">
+        <p class="location-label">
+          {{ location.label || 'Endereço ainda não identificado' }}
+        </p>
+        <p class="location-coords">
+          {{ location.latitude.toFixed(5) }}, {{ location.longitude.toFixed(5) }}
+          <span v-if="location.accuracy != null">
+            · precisão estimada {{ Math.round(location.accuracy) }} m
+          </span>
+          <span
+            v-if="accuracyLevel"
+            :class="`accuracy-badge accuracy-badge--${accuracyLevel}`"
+          >
+            Precisão {{ accuracyLevel }}
+          </span>
+        </p>
+      </div>
+
+      <TaskLocationMap v-if="location" :location="location" />
+    </div>
+
   </form>
 </template>
 
 
 <script setup>
-import { ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import tasksApi from '../api/tasksApi.js';
-
-const isMobileDevice = ref(
-  !window.matchMedia('(pointer: fine)').matches,
-);
+import geocodingApi from '../api/geocodingApi.js';
+import TaskLocationMap from './TaskLocationMap.vue';
+import { useGeolocation } from '../composables/useGeolocation.js';
+import { classifyAccuracy } from '../utils/location.js';
 
 const props = defineProps({
   editingTask: {
@@ -99,6 +152,24 @@ const previewUrl = ref(null);
 const imgAttachmentKey = ref(null);
 const uploading = ref(false);
 
+const {
+  isSupported,
+  loadingLocation,
+  locationError,
+  location,
+  readPermissionState,
+  setLocationFromTask,
+  clearLocation,
+  setLocationLabel,
+  requestCurrentLocation,
+} = useGeolocation();
+
+const accuracyLevel = computed(() => classifyAccuracy(location.value?.accuracy));
+
+onMounted(() => {
+  readPermissionState();
+});
+
 watch(
   () => props.editingTask,
   (task) => {
@@ -110,8 +181,37 @@ watch(
 
     previewUrl.value = null;
     imgAttachmentKey.value = null;
+    setLocationFromTask(task);
   },
 );
+
+async function handleGetLocation() {
+  const captured = await requestCurrentLocation();
+  if (!captured) return;
+
+  try {
+    const address = await geocodingApi.reverse(
+      captured.latitude,
+      captured.longitude,
+    );
+    setLocationLabel(address?.label);
+  } catch {
+    locationError.value =
+      'Localização obtida, mas não foi possível identificar a rua.';
+  }
+}
+
+function resetForm() {
+  newTask.value = '';
+
+  if (previewUrl.value) {
+    URL.revokeObjectURL(previewUrl.value);
+  }
+
+  previewUrl.value = null;
+  imgAttachmentKey.value = null;
+  clearLocation();
+}
 
 async function handleImageChange(event) {
   const file = event.target.files[0];
@@ -145,6 +245,7 @@ function handleSubmit() {
   const payload = {
     title: newTask.value.trim(),
     imgAttachmentKey: imgAttachmentKey.value,
+    location: location.value,
   };
 
   if (props.editingTask) {
@@ -153,26 +254,11 @@ function handleSubmit() {
     emit('add', payload);
   }
 
-  newTask.value = '';
-
-  if (previewUrl.value) {
-    URL.revokeObjectURL(previewUrl.value);
-  }
-
-  previewUrl.value = null;
-  imgAttachmentKey.value = null;
+  resetForm();
 }
 
 function handleCancel() {
-  newTask.value = '';
-
-  if (previewUrl.value) {
-    URL.revokeObjectURL(previewUrl.value);
-  }
-
-  previewUrl.value = null;
-  imgAttachmentKey.value = null;
-
+  resetForm();
   emit('cancel');
 }
 </script>
@@ -444,6 +530,130 @@ function handleCancel() {
   font-size: 11px;
 
   line-height: 1.4;
+}
+
+
+.location-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  padding: 10px 12px;
+
+  border: 1px dashed #cbd5df;
+  border-radius: 9px;
+
+  background-color: #f8fafc;
+}
+
+.location-privacy {
+  margin: 0;
+
+  color: #687681;
+
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.location-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.location-button,
+.location-button-remove {
+  height: 34px;
+  padding: 0 12px;
+
+  border-radius: 7px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.location-button {
+  border: none;
+
+  background-color: #e8f1fb;
+  color: #357abd;
+}
+
+.location-button:hover:not(:disabled) {
+  background-color: #dcebf9;
+}
+
+.location-button:disabled,
+.location-button-remove:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.location-button-remove {
+  border: 1px solid #d7dee6;
+
+  background-color: #ffffff;
+  color: #687681;
+}
+
+.location-error {
+  margin: 0;
+
+  color: #c0392b;
+
+  font-size: 12px;
+}
+
+.location-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.location-label {
+  margin: 0;
+
+  color: #263238;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.location-coords {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+
+  margin: 0;
+
+  color: #687681;
+
+  font-size: 12px;
+}
+
+.accuracy-badge {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.accuracy-badge--boa {
+  background: #d4edda;
+  color: #155724;
+}
+
+.accuracy-badge--moderada {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.accuracy-badge--baixa {
+  background: #f8d7da;
+  color: #721c24;
 }
 
 

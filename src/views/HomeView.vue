@@ -9,15 +9,20 @@
       @cancel="handleCancel"
     />
 
+    <label class="location-filter">
+      <input v-model="onlyWithLocation" type="checkbox" />
+      Somente com localização
+    </label>
+
     <p v-if="store.loading" class="loading-message">Carregando tarefas...</p>
 
     <template v-else>
-      <section v-if="store.pendingTasks.length > 0">
+      <section v-if="pendingTasks.length > 0">
         <h2 class="section-title">
-          Pendentes ({{ store.pendingTasks.length }})
+          Pendentes ({{ pendingTasks.length }})
         </h2>
         <TaskItem
-          v-for="task in store.pendingTasks"
+          v-for="task in pendingTasks"
           :key="task.id"
           :task="task"
           @toggle="handleToggle"
@@ -26,12 +31,12 @@
         />
       </section>
 
-      <section v-if="store.completedTasks.length > 0">
+      <section v-if="completedTasks.length > 0">
         <h2 class="section-title">
-          Concluídas ({{ store.completedTasks.length }})
+          Concluídas ({{ completedTasks.length }})
         </h2>
         <TaskItem
-          v-for="task in store.completedTasks"
+          v-for="task in completedTasks"
           :key="task.id"
           :task="task"
           @toggle="handleToggle"
@@ -43,6 +48,12 @@
       <p v-if="store.tasks.length === 0" class="empty-message">
         Nenhuma tarefa cadastrada. Adicione uma acima.
       </p>
+      <p
+        v-else-if="pendingTasks.length === 0 && completedTasks.length === 0"
+        class="empty-message"
+      >
+        Nenhuma tarefa com localização.
+      </p>
     </template>
 
     <InstallButton />
@@ -50,7 +61,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import TaskForm from '../components/TaskForm.vue';
 import TaskItem from '../components/TaskItem.vue';
 import InstallButton from '../components/InstallButton.vue';
@@ -58,6 +69,19 @@ import { useTasksStore } from '../stores/tasks.js';
 
 const store = useTasksStore();
 const editingTask = ref(null);
+const onlyWithLocation = ref(false);
+
+const pendingTasks = computed(() =>
+  onlyWithLocation.value
+    ? store.pendingTasks.filter((task) => task.latitude != null)
+    : store.pendingTasks,
+);
+
+const completedTasks = computed(() =>
+  onlyWithLocation.value
+    ? store.completedTasks.filter((task) => task.latitude != null)
+    : store.completedTasks,
+);
 
 onMounted(() => {
   store.fetchTasks();
@@ -92,6 +116,15 @@ function handleRemove(id) {
 </script>
 
 <style scoped>
+.location-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #3f4a56;
+  font-size: 14px;
+}
+
 .section-title {
   font-size: 1rem;
   color: #666;

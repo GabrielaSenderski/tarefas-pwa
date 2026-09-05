@@ -1,7 +1,7 @@
 import { extractAddressLabel, locationCacheKey } from '../utils/location.js'
 
 const REVERSE_URL =
-  import.meta.env.VITE_GEOCODING_BASE_URL ?? 'https://nominatim.openstreetmap.org/reverse'
+  import.meta.env.VITE_GEOCODING_BASE_URL ?? '/nominatim/reverse'
 
 const CACHE_PREFIX = 'reverse-geocode:'
 
@@ -37,7 +37,12 @@ const geocodingApi = {
       zoom: '18',
       addressdetails: '1',
     })
-    const response = await fetch(`${REVERSE_URL}?${params}`)
+    const response = await fetch(`${REVERSE_URL}?${params}`, {
+      headers: {
+        Accept: 'application/json',
+        'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
+      },
+    })
     if (!response.ok) throw new Error(`Falha HTTP ${response.status}`)
 
     const result = await response.json()

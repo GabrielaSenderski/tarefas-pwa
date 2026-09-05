@@ -139,6 +139,17 @@ export default defineConfig({
       changeOrigin: true,
       rewrite: (path) => path.replace(/^\/api/, ''),
     },
+
+    '/nominatim': {
+      target: 'https://nominatim.openstreetmap.org',
+      changeOrigin: true,
+      rewrite: (path) => path.replace(/^\/nominatim/, ''),
+      configure: (proxy) => {
+        proxy.on('proxyReq', (proxyReq) => {
+          proxyReq.setHeader('User-Agent', 'tarefas-pwa-educacional/1.0');
+        });
+      },
+    },
   }
 }
 });
