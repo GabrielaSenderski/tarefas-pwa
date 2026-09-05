@@ -58,5 +58,5 @@ main {
 </style>
 
 <!-- comando para rodar o projeto no docker: -->
-<!--docker run -p 8001:8001 eduardosilvasc/gerenciamento-tarefas-2026:4.0 -->
+<!--docker run -p 8001:8001 eduardosilvasc/gerenciamento-tarefas-2026:5.0 -->
 <!-- http://localhost:8001/docs -->
